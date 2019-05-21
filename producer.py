@@ -1,6 +1,6 @@
 # https://developer.twitter.com/en/apps
 
-from kafka import KafkaConsumer
+from kafka import KafkaProducer
 import ConfigParser
 import twitter
 
@@ -30,6 +30,16 @@ class Twitter:
                           access_token_key=self.access_token, access_token_secret=self.access_token_secret)
         return api
 
-    def getTimeline(self):
+    def get_timeline(self):
         for tweet in authenticate().GetHomeTimeline():
             print(tweet.text)
+
+
+class Producer(self):
+    producer = KafkaProducer(bootstrap_servers=KAFKA_ENDPOINT)
+
+    def get_data(self, data):
+        data_json = json.loads(data)
+        str_tweet = data_json['text'].encode('utf-8')
+        self.producer.send(KAFKA_TOPIC, str_tweet)
+        print(str_tweet)
