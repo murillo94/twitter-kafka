@@ -15,7 +15,7 @@ KAFKA_ENDPOINT = config.get('Kafka', 'kafka_endpoint_port')
 KAFKA_TOPIC = config.get('Kafka', 'topic')
 
 
-class StdOutListener(StreamListener):
+class Listener(StreamListener):
     def on_data(self, data):
         producer.send_messages(KAFKA_TOPIC, data.encode('utf-8'))
         return True
@@ -28,9 +28,9 @@ if __name__ == "__main__":
     client = KafkaClient(f'localhost:{KAFKA_ENDPOINT}')
     producer = SimpleProducer(client)
 
-    listener = StdOutListener()
+    listen = Listener()
     auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 
-    stream = Stream(auth, listener)
-    stream.filter(track="finance")
+    stream = Stream(auth, listen)
+    stream.filter(track="neymar")
