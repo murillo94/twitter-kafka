@@ -1,45 +1,36 @@
-# https://developer.twitter.com/en/apps
+import configparser
+from tweepy.streaming import StreamListener
+from tweepy import OAuthHandler
+from tweepy import Stream
+from kafka import SimpleProducer, KafkaClient
 
-from kafka import KafkaProducer
-import ConfigParser
-import twitter
-
-config = ConfigParser.RawConfigParser()
+config = configparser.RawConfigParser()
 config.read('config.cfg')
 
 CONSUMER_KEY = config.get('Twitter', 'consumer_key')
 CONSUMER_SECRET = config.get('Twitter', 'consumer_secret')
 ACCESS_TOKEN = config.get('Twitter', 'access_token')
 ACCESS_TOKEN_SECRET = config.get('Twitter', 'access_token_secret')
-TWITTER_STREAMING_MODE = config.get('Twitter', 'streaming_mode')
-KAFKA_ENDPOINT = '{0}:{1}'.format(config.get(
-    'Kafka', 'kafka_endpoint'), config.get('Kafka', 'kafka_endpoint_port'))
+KAFKA_ENDPOINT = config.get('Kafka', 'kafka_endpoint_port')
 KAFKA_TOPIC = config.get('Kafka', 'topic')
-NUM_RETRIES = 3
 
 
-class Twitter:
-    def __init__(self, consumer_key=CONSUMER_KEY, consumer_secret=CONSUMER_SECRET, access_token=ACCESS_TOKEN, access_token_secret=ACCESS_TOKEN_SECRET)
-    self.consumer_key = consumer_key
-    self.consumer_secret = consumer_secret
-    self.access_token = access_token
-    self.access_token_secret = access_token_secret
+class StdOutListener(StreamListener):
+    def on_data(self, data):
+        producer.send_messages(KAFKA_TOPIC, data.encode('utf-8'))
+        return True
 
-    def authenticate(self):
-        api = twitter.Api(consumer_key=self.consumer_key, consumer_secret=self.consumer_secret,
-                          access_token_key=self.access_token, access_token_secret=self.access_token_secret)
-        return api
-
-    def get_timeline(self):
-        for tweet in authenticate().GetHomeTimeline():
-            print(tweet.text)
+    def on_error(self, status):
+        print(status)
 
 
-class Producer(self):
-    producer = KafkaProducer(bootstrap_servers=KAFKA_ENDPOINT)
+if __name__ == "__main__":
+    client = KafkaClient(f'localhost:{KAFKA_ENDPOINT}')
+    producer = SimpleProducer(client)
 
-    def get_data(self, data):
-        data_json = json.loads(data)
-        str_tweet = data_json['text'].encode('utf-8')
-        self.producer.send(KAFKA_TOPIC, str_tweet)
-        print(str_tweet)
+    listener = StdOutListener()
+    auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+    auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+
+    stream = Stream(auth, listener)
+    stream.filter(track="finance")
