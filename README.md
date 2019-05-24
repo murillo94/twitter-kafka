@@ -40,7 +40,15 @@ bin/kafka-topics.sh --describe --topic topic --zookeeper localhost:2181
 
 6 - Install repo packages and run inside `python` folder (you must have pipenv installed)
 
-`pipenv install` and `pipenv shell`
+```
+pipenv install
+```
+
+and
+
+```
+pipenv shell
+```
 
 7 - Running `producer`
 
@@ -58,4 +66,12 @@ python consumer.py
 
 #### Node
 
-`npm i` and `node consumer.js`
+```
+npm i
+```
+
+and
+
+```
+node consumer.js
+```
