@@ -1,0 +1,13 @@
+{
+  "name": "twitter-kafka-nodejs",
+  "version": "1.0.0",
+  "description": "Consumer to process Kafka message from Twitter (tweet) and apply sentiment analysis",
+  "main": "consumer.js",
+  "author": "Murillo de Miranda Pereira",
+  "license": "MIT",
+  "dependencies": {
+    "@google-cloud/language": "^3.0.0",
+    "configparser": "^0.3.6",
+    "kafka-node": "^4.1.3"
+  }
+}

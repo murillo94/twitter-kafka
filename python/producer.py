@@ -5,7 +5,7 @@ from tweepy import Stream
 from kafka import SimpleProducer, KafkaClient
 
 config = configparser.RawConfigParser()
-config.read('config.cfg')
+config.read('../config.cfg')
 
 CONSUMER_KEY = config.get('Twitter', 'consumer_key')
 CONSUMER_SECRET = config.get('Twitter', 'consumer_secret')
