@@ -9,6 +9,7 @@ verify_ssl = true
 kafka-python = "*"
 tweepy = "*"
 google-cloud-language = "*"
+click = "*"
 
 [requires]
 python_version = "3.7"

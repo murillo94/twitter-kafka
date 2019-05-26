@@ -5,7 +5,7 @@ Tweets streaming process from Twitter to Kafka and text (tweet) sentiment analys
 ## Running locally
 
 - You must have Java installed.
-- You must have an account in `Google Cloud Platform` and generate an `auth.json` to sentiment analysis API and put in the root of the project.
+- You must have an account in [Google Cloud Platform](https://cloud.google.com/) and generate an [auth.json](https://cloud.google.com/natural-language/docs/quickstart-client-libraries) to sentiment analysis API and put in the root of the project.
 
 1 - Install Apache Kafka
 
@@ -13,14 +13,14 @@ Tweets streaming process from Twitter to Kafka and text (tweet) sentiment analys
 https://www.apache.org/dyn/closer.cgi?path=/kafka/2.2.0/kafka_2.12-2.2.0.tgz
 ```
 
-2 -Initialize Zookeeper
+2 -Init Zookeeper
 
 ```
 cd kafka_2.12-2.2.0
 bin/zookeeper-server-start.sh config/zookeeper.properties
 ```
 
-3 - Initialize Kafka
+3 - Init Kafka
 
 ```
 bin/kafka-server-start.sh config/server.properties
@@ -50,21 +50,21 @@ and
 pipenv shell
 ```
 
-7 - Running `producer`
+7 - Running `producer` (go to python folder)
 
 ```
-python producer.py
+python producer.py --keyword <some_text_here>
 ```
 
 8 - Running `consumer`
 
-#### Python
+#### Python (go to python folder)
 
 ```
 python consumer.py
 ```
 
-#### Node
+#### Node (go to node folder)
 
 ```
 npm i
