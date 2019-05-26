@@ -1,6 +1,6 @@
 const ConfigParser = require('configparser');
 const language = require('@google-cloud/language');
-const { Consumer, KafkaClient } = require('kafka-node');
+const { SimpleConsumer } = require('no-kafka');
 
 const config = new ConfigParser();
 config.read('../config.cfg');
@@ -14,28 +14,24 @@ GOOGLE_APPLICATION_CREDENTIALS = config.get(
 
 process.env['GOOGLE_APPLICATION_CREDENTIALS'] = GOOGLE_APPLICATION_CREDENTIALS;
 
-const clientKafka = new KafkaClient({
-  kafkaHost: `localhost:${KAFKA_ENDPOINT_PORT}`
-});
 const clientGoogle = new language.LanguageServiceClient();
 
-async function runKafka() {
-  const topics = [{ topic: KAFKA_TOPIC }];
-  const options = {
-    autoCommit: false,
-    fetchMaxWaitMs: 1000,
-    fetchMaxBytes: 1024 * 1024
-  };
-
-  const consumer = new Consumer(clientKafka, topics, options);
-
-  consumer.on('message', async ({ value }) => {
-    const { text } = JSON.parse(value);
-    await analyzeText(text);
+function initKafka() {
+  const consumer = new SimpleConsumer({
+    connectionString: `localhost:${KAFKA_ENDPOINT_PORT}`
   });
 
-  consumer.on('error', err => {
-    console.log('error', err);
+  const data = messageKafka => {
+    messageKafka.forEach(async ({ message }) => {
+      const value = message.value.toString('utf8');
+      const { text } = JSON.parse(value);
+
+      if (text) await analyzeText(text);
+    });
+  };
+
+  return consumer.init().then(() => {
+    return consumer.subscribe(KAFKA_TOPIC, data);
   });
 }
 
@@ -50,7 +46,7 @@ async function analyzeText(text) {
 
   console.log(`Text: ${text}`);
   console.log(`Score: ${score}`);
-  console.log(`Magnitude: ${magnitude}`);
+  console.log(`Magnitude: ${magnitude}\n`);
 }
 
-runKafka();
+initKafka();
