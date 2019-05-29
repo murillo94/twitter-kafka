@@ -30,7 +30,7 @@ function initKafka() {
       const value = message.value.toString('utf8');
       const { text } = JSON.parse(value);
 
-      if (text) await analyzeText(text)
+      if (text) await analyzeText(text);
     });
   };
 
@@ -47,13 +47,13 @@ async function analyzeText(text) {
 
   const [result] = await clientGoogle.analyzeSentiment({ document });
   const { score, magnitude } = result.documentSentiment;
-  const data = JSON.stringify({text, score, magnitude})
+  const data = JSON.stringify({text, score, magnitude});
 
   createFile(data)
 }
 
 function createFolder() {
-  if (!fs.existsSync(dir)){
+  if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
 }
